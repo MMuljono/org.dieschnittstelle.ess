@@ -1,6 +1,10 @@
 package org.dieschnittstelle.ess.wsv.client;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
@@ -32,7 +36,10 @@ public class AccessRESTServiceWithInterpreter {
 		/*
 		 * TODO: create a client for the web service using Proxy.newProxyInstance()
 		 */
-        ITouchpointCRUDService serviceProxy = null;
+        ITouchpointCRUDService serviceProxy = (ITouchpointCRUDService) Proxy.newProxyInstance(AccessRESTServiceWithInterpreter.class.getClassLoader(),
+                new Class[]{ITouchpointCRUDService.class},
+                new JAXRSClientInterpreter(ITouchpointCRUDService.class, "http://localhost:8888/org.dieschnittstelle.ess.jrs/api")
+        );
 
         show("serviceProxy: " + serviceProxy);
 
@@ -57,7 +64,7 @@ public class AccessRESTServiceWithInterpreter {
         Address addr = new Address("Luxemburger Strasse", "10", "13353",
                 "Berlin");
         StationaryTouchpoint tp = new StationaryTouchpoint(-1,
-                "BHT Verkaufsstand", addr);
+                "BHT Proxy Verkaufsstand", addr);
         tp = (StationaryTouchpoint)serviceProxy.createTouchpoint(tp);
         show("created: " + tp);
 

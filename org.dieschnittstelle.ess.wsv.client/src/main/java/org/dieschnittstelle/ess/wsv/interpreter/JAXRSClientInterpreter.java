@@ -54,6 +54,11 @@ public class JAXRSClientInterpreter implements InvocationHandler {
     public JAXRSClientInterpreter(Class serviceInterface,String baseurl) {
 
         // TODO: implement the constructor!
+        this.baseurl = baseurl;
+        this.serviceInterface = serviceInterface;
+        if(serviceInterface.isAnnotationPresent(Path.class)){
+            commonPath = ((Path)serviceInterface.getAnnotation(Path.class)).value();
+        }
 
         logger.info("<constructor>: " + serviceInterface + " / " + baseurl + " / " + commonPath);
     }
@@ -64,12 +69,15 @@ public class JAXRSClientInterpreter implements InvocationHandler {
             throws Throwable {
 
         // TODO check whether we handle the toString method and give some appropriate return value
+        if("toString".equals(meth.getName())){
+            return "JAX-RS Proxy for " + this.serviceInterface;
+        }
 
         // use a default http client
         HttpClient client = Http.createSyncClient();
 
         // TODO: create the url using baseurl and commonpath (further segments may be added if the method has an own @Path annotation)
-        String url = null;
+        String url = baseurl + commonPath + (meth.isAnnotationPresent(Path.class) ? meth.getAnnotation(Path.class).value() : "");
 
         // TODO: check whether we have a path annotation and append the url (path params will be handled when looking at the method arguments)
 
@@ -91,9 +99,19 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         // declare a HttpUriRequest variable
         HttpUriRequest request = null;
 
+        if (meth.isAnnotationPresent(GET.class)) {
+            request = new HttpGet(url);
+        }
+        else if(meth.isAnnotationPresent(POST.class)){
+            request = new HttpPost(url);
+        }
         // TODO: check which of the http method annotation is present and instantiate request accordingly passing the url
+        else {
+            throw new UnsupportedOperationException ("Demo only supports GET and Post. Extend for WSV1!");
+        }
 
         // TODO: add a header on the request declaring that we accept json (for header names, you can use the constants declared in javax.ws.rs.core.HttpHeaders, for content types use the constants from javax.ws.rs.core.MediaType;)
+        request.setHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         // if we need to send the method argument in the request body we need to declare an entity
         ByteArrayEntity bae = null;
@@ -102,15 +120,19 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         if (bodyValue != null) {
 
             // TODO: use a ByteArrayOutputStream for writing json
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             // TODO: write the object to the stream using the jsonSerialiser
+            jsonSerialiser.writeObject(bodyValue, bos);
 
             // TODO: create an ByteArrayEntity from the stream's content
+            bae = new ByteArrayEntity(bos.toByteArray());
 
             // TODO: set the entity on the request, which must be cast to HttpEntityEnclosingRequest
+            ((HttpEntityEnclosingRequest)request).setEntity(bae);
 
             // TODO: and add a content type header for the request
-
+            request.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         }
 
         logger.info("invoke(): executing request: " + request);
@@ -124,7 +146,7 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
             // declare a variable for the return value
-            Object returnValue = null;
+            Object returnValue = jsonSerialiser.readObject(response.getEntity().getContent(),meth.getGenericReturnType());
 
             // TODO: convert the resonse body to a java object of an appropriate type considering the return type of the method as returned by getGenericReturnType() and set the object as value of returnValue
 

@@ -7,9 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
-// TODO: JWS0: entfernen Sie die Kommentare für die folgenden Imports und die Implementierung der main-Methode
-//  ACHTUNG: falls IntelliJ nicht genutzte Imports automatisch löscht, dann entfernen
-//  Sie zunächst die Kommentare aus der main-Methode und dann die der Imports.
+// TODO: entfernen Sie die Kommentare für die folgenden Imports und die Implementierung der main-Methode
 
 //import org.dieschnittstelle.ess.entities.crm.ws.AbstractTouchpoint;
 //import org.dieschnittstelle.ess.entities.crm.ws.StationaryTouchpoint;

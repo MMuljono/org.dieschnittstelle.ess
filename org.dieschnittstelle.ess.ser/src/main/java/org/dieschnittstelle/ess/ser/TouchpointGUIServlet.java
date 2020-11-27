@@ -32,6 +32,7 @@ public class TouchpointGUIServlet extends HttpServlet {
 		// this can be used to demonstrate browser behaviour
 		// for refreshes of POST vs. GET requests for the create action.
 		// change method attribute in jsp for trying it out.
+		displayView(request, response);
 		if (request.getPathInfo().startsWith("/create"))  {
 			doPost(request,response);
 		}

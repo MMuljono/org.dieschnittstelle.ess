@@ -60,6 +60,18 @@ public class ReflectedStockItemBuilder implements IStockItemBuilder {
 			Class klass = Class.forName(klassname);
 			show("klass: %s", klass);
 
+
+			//testing purpose
+//			for (Field attr : klass.getDeclaredFields()){
+//				show("found attr Test: %s", attr);
+//				show("attr types:  Test: %s", attr.getType());
+//			}
+
+			//testing purpose2
+//			for (Method meth : klass.getDeclaredMethods()){
+//				show("found meth Test: %s", meth);
+//			}
+
 			// create the instance
 			instance = (IStockItem)klass.getConstructor(new Class[]{}).newInstance();
 			show("created instance: %s", instance);
@@ -75,8 +87,7 @@ public class ReflectedStockItemBuilder implements IStockItemBuilder {
 			// iterate over the so far unprocessed attributes
 			for (String xmlAttr : instanceAttributes.keySet()) {
 				String value = instanceAttributes.get(xmlAttr);
-				show("set: %s=%s", xmlAttr, instanceAttributes.get(xmlAttr));
-
+				show("set: %s=%s", xmlAttr, value);
 				// determine the field object for the attribute
 				Field f = klass.getDeclaredField(xmlAttr);
 

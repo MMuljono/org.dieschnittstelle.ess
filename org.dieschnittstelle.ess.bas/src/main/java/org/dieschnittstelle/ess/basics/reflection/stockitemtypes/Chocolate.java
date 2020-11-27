@@ -11,6 +11,8 @@ public class Chocolate implements IStockItem {
 	private String brandname;
 	
 	private int price;
+
+	private String expiry;
 	
 	public Chocolate() {
 		show("Chocolate: constructor invoked");
@@ -41,7 +43,7 @@ public class Chocolate implements IStockItem {
 
 	@Override
 	public String toString() {
-		return String.format("<Chocolate %s %d %d>", this.brandname, this.units, this.price);
+		return String.format("<Chocolate %s %d %d %s>", this.brandname, this.units, this.price, this.expiry);
 	}
 
 	public String getBrandname() {
@@ -62,4 +64,11 @@ public class Chocolate implements IStockItem {
 		this.price = price;
 	}
 
+	public String getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(String expiry) {
+		this.expiry = expiry;
+	}
 }

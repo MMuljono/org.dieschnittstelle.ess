@@ -28,18 +28,18 @@ else {
 </head>
 <body>
 	<!--  print out the class hierarchy -->
-<%--	<%=this%>--%>
+	<%=this%>
 	<br />
-<%--	<%--%>
-<%--		Class klass = this.getClass();--%>
-<%--		String tabs = "";--%>
-<%--		do {--%>
-<%--	%><%=tabs + klass%><br />--%>
-<%--	<%--%>
-<%--		klass = klass.getSuperclass();--%>
-<%--			tabs += "\t";--%>
-<%--		} while (klass != null);--%>
-<%--	%>--%>
+	<%
+		Class klass = this.getClass();
+		String tabs = "";
+		do {
+	%><%=tabs + klass%><br />
+	<%
+		klass = klass.getSuperclass();
+			tabs += "\t";
+		} while (klass != null);
+	%>
 
 	<!--  access session attributes and their constituents -->
 	<h3>SER Touchpoints</h3>

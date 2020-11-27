@@ -1,13 +1,14 @@
 package org.dieschnittstelle.ess.ser.client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.logging.log4j.Logger;
 import org.dieschnittstelle.ess.entities.crm.AbstractTouchpoint;
@@ -27,6 +28,7 @@ public class ShowTouchpointService {
 	 */
 	public static void main(String[] args) {
 		ShowTouchpointService service = new ShowTouchpointService();
+
 		service.run();
 	}
 
@@ -70,6 +72,7 @@ public class ShowTouchpointService {
 		// 1) read out all touchpoints
 		List<AbstractTouchpoint> touchpoints = readAllTouchpoints();
 
+
 		// 2) delete the touchpoint after next console input
 		if (touchpoints != null && touchpoints.size() > 0) {
 			if (stepwise)
@@ -83,11 +86,10 @@ public class ShowTouchpointService {
 			step();
 		}
 
-		Address addr = new Address("Luxemburger Strasse", "10", "13353",
+		Address addr = new Address("Luxemburger Strasse testing", "10", "13353",
 				"Berlin");
 		StationaryTouchpoint tp = new StationaryTouchpoint(-1,
 				"BHT Verkaufsstand", addr);
-
 		createNewTouchpoint(tp);
 
 		try {
@@ -179,6 +181,22 @@ public class ShowTouchpointService {
 
 		logger.debug("client running: {}",client.isRunning());
 
+		try {
+
+			// create post request for the api/touchpoints uri
+			HttpDelete delete = new HttpDelete("http://localhost:8888/org.dieschnittstelle.ess.ser/api/touchpoints/" + tp.getId());
+			show("delete is here" + delete);
+
+			Future <HttpResponse> responsefuture = client.execute(delete, null);
+			HttpResponse response = responsefuture.get();
+			// get the response from the Future object
+			show("response: " + response.getStatusLine());
+
+
+		} catch (Exception e) {
+			logger.error("got exception: " + e, e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -201,34 +219,51 @@ public class ShowTouchpointService {
 		try {
 
 			// create post request for the api/touchpoints uri
+			HttpPost request = new HttpPost("http://localhost:8888/org.dieschnittstelle.ess.ser/api/touchpoints");
 
 			// create an ObjectOutputStream from a ByteArrayOutputStream - the
 			// latter must be accessible via a variable
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			show("Object data before write  " + Arrays.toString(bos.toByteArray()));
+
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+
+			show("Object data after write  " + Arrays.toString(bos.toByteArray()));
 
 			// write the object to the output stream
+			oos.writeObject(tp);
 
 			// create a ByteArrayEntity and pass it the byte array from the
 			// output stream
+			ByteArrayEntity bae = new ByteArrayEntity(bos.toByteArray());
 
 			// set the entity on the request
+			request.setEntity(bae);
 
 			// execute the request, which will return a Future<HttpResponse> object
-
+			Future <HttpResponse> responseFuture = client.execute(request, null);
+			HttpResponse response = responseFuture.get();
 			// get the response from the Future object
-
+			show("response: " +response.getStatusLine());
 			// log the status line
 
 			// evaluate the result using getStatusLine(), use constants in
 			// HttpStatus
 
 			/* if successful: */
+			if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 
 			// create an object input stream using getContent() from the
 			// response entity (accessible via getEntity())
+				ObjectInputStream ois = new ObjectInputStream(response.getEntity().getContent());
 
 			// read the touchpoint object from the input stream
+				AbstractTouchpoint receivedTp = (AbstractTouchpoint) ois.readObject();
 
+				show("received tp: "+ receivedTp);
 			// return the object that you have read from the response
+				return receivedTp;
+			}
 			return null;
 		} catch (Exception e) {
 			logger.error("got exception: " + e, e);
