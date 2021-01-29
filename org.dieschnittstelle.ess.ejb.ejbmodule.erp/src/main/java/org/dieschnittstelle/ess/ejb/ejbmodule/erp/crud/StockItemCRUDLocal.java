@@ -13,6 +13,7 @@ import org.dieschnittstelle.ess.entities.erp.StockItem;
  * this interface shall be implemented using a stateless EJB with an EntityManager.
  * See the comments below for hints at how to implement the methods
  */
+@Local
 public interface StockItemCRUDLocal {
 
     /*

@@ -7,6 +7,7 @@ import javax.ejb.Local;
 import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 import org.dieschnittstelle.ess.entities.erp.StockItem;
 
+@Local
 public interface StockSystemLocal {
 
 	/**
