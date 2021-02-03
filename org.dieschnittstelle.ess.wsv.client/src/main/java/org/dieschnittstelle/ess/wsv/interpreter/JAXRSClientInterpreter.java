@@ -2,16 +2,17 @@ package org.dieschnittstelle.ess.wsv.interpreter;
 
 
 import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import org.apache.http.client.methods.*;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.Logger;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -19,9 +20,6 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 
 import org.dieschnittstelle.ess.utils.Http;
@@ -88,6 +86,13 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         if (args != null && args.length > 0) {
             if (meth.getParameterAnnotations()[0].length > 0 && meth.getParameterAnnotations()[0][0].annotationType() == PathParam.class) {
                 // TODO: handle PathParam on the first argument - do not forget that in this case we might have a second argument providing a bodyValue
+                String path = ((Path)meth.getAnnotation(Path.class)).value();
+                url = url.replace(path,"/"+args[0].toString());
+                if(args.length == 2){
+                    bodyValue = args[1];
+                }
+                System.out.println("let see here3 "+ url);
+
                 // TODO: if we have a path param, we need to replace the corresponding pattern in the url with the parameter value
             }
             else {
@@ -98,14 +103,20 @@ public class JAXRSClientInterpreter implements InvocationHandler {
 
         // declare a HttpUriRequest variable
         HttpUriRequest request = null;
-
+        System.out.println("let see here4 "+ url);
+        // TODO: check which of the http method annotation is present and instantiate request accordingly passing the url
         if (meth.isAnnotationPresent(GET.class)) {
             request = new HttpGet(url);
         }
         else if(meth.isAnnotationPresent(POST.class)){
             request = new HttpPost(url);
         }
-        // TODO: check which of the http method annotation is present and instantiate request accordingly passing the url
+        else if(meth.isAnnotationPresent(DELETE.class)){
+            request = new HttpDelete(url);
+        }
+        else if(meth.isAnnotationPresent(PUT.class)){
+            request = new HttpPut(url);
+        }
         else {
             throw new UnsupportedOperationException ("Demo only supports GET and Post. Extend for WSV1!");
         }
@@ -146,10 +157,11 @@ public class JAXRSClientInterpreter implements InvocationHandler {
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
             // declare a variable for the return value
-            Object returnValue = jsonSerialiser.readObject(response.getEntity().getContent(),meth.getGenericReturnType());
-
             // TODO: convert the resonse body to a java object of an appropriate type considering the return type of the method as returned by getGenericReturnType() and set the object as value of returnValue
-
+            Object returnValue = jsonSerialiser.readObject(response.getEntity().getContent(),meth.getGenericReturnType());
+            if(bae!=null){
+                EntityUtils.consume(bae);
+            }
             // and return the return value
             logger.info("invoke(): returning value: " + returnValue);
             return returnValue;

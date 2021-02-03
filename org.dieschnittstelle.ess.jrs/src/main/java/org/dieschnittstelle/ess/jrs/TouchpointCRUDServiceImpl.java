@@ -61,8 +61,18 @@ public class TouchpointCRUDServiceImpl implements ITouchpointCRUDService {
             throw new NotFoundException("The touchpoint with id " + id + " does not exist!");
         }
     }
-
     /*
      * UE JRS1: implement the method for updating touchpoints
      */
+    @Override
+    public StationaryTouchpoint updateTouchpoint(long id, StationaryTouchpoint touchpoint) {
+        StationaryTouchpoint readtp = (StationaryTouchpoint) this.touchpointCRUD.readObject(id);
+        StationaryTouchpoint tp = (StationaryTouchpoint) this.touchpointCRUD.updateObject(readtp);
+        if (tp != null) {
+            return tp;
+        } else {
+            throw new NotFoundException("The touchpoint with id " + id + " does not exist!");
+        }
+    }
+
 }

@@ -46,6 +46,7 @@ public class ShowAnnotations {
 				if(attr.isAnnotationPresent(DisplayAs.class)){
 					Annotation an = attr.getAnnotation(DisplayAs.class);
 					DisplayAs newName = (DisplayAs) an;
+					show("consumable  + attr + new name" + consumable + "    "+ an + "    "+ newName.value());
 					if (i == (attrs.length-1)) {
 						sb.append(newName.value() + ": " + attr.get(consumable) );
 					} else {

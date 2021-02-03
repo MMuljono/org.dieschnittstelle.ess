@@ -50,7 +50,7 @@ public class StockItemCRUDStateless implements StockItemCRUDLocal {
 
     @Override
     public List<StockItem> readStockItemsForProduct(IndividualisedProductItem prod) {
-        Query query = em.createQuery("SELECT si FROM StockItem si WHERE si.product = " + prod.getId());
+        Query query = em.createQuery("SELECT si FROM StockItem AS si WHERE si.product = " + prod.getId());
         return query.getResultList();
     }
 

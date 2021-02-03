@@ -2,20 +2,14 @@ package org.dieschnittstelle.ess.entities.erp;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.logging.log4j.Logger;
 
 @Entity
+//@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
+@SequenceGenerator(name = "pos_sequence", sequenceName = "pos_id_sequence")
 public class PointOfSale implements Serializable {
 
 	/**
@@ -26,7 +20,7 @@ public class PointOfSale implements Serializable {
 	protected static Logger logger = org.apache.logging.log4j.LogManager.getLogger(PointOfSale.class);
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pos_sequence")
 	private long id;
 
 	public PointOfSale() {
