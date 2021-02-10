@@ -185,8 +185,6 @@ public class ShowTouchpointService {
 
 			// create post request for the api/touchpoints uri
 			HttpDelete delete = new HttpDelete("http://localhost:8888/org.dieschnittstelle.ess.ser/api/touchpoints/" + tp.getId());
-			show("delete is here" + delete);
-
 			Future <HttpResponse> responsefuture = client.execute(delete, null);
 			HttpResponse response = responsefuture.get();
 			// get the response from the Future object

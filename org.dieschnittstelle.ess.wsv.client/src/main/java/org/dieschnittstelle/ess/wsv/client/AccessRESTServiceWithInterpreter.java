@@ -47,7 +47,7 @@ public class AccessRESTServiceWithInterpreter {
         step();
 
         // 1) read out all touchpoints
-        List<StationaryTouchpoint> tps = serviceProxy.readAllTouchpoints();
+        List<AbstractTouchpoint> tps = (List) serviceProxy.readAllTouchpoints();
         show("read all: " + tps);
 
 
@@ -64,9 +64,9 @@ public class AccessRESTServiceWithInterpreter {
 
         Address addr = new Address("Luxemburger Strasse", "10", "13353",
                 "Berlin");
-        StationaryTouchpoint tp = new StationaryTouchpoint(-1,
+        AbstractTouchpoint tp = new StationaryTouchpoint(-1,
                 "BHT Proxy Verkaufsstand", addr);
-        tp = (StationaryTouchpoint) serviceProxy.createTouchpoint(tp);
+        tp = (AbstractTouchpoint)serviceProxy.createTouchpoint((StationaryTouchpoint) tp);
         show("created: " + tp);
 
         // TODO: comment-in the call to read() once this is handled
@@ -85,7 +85,7 @@ public class AccessRESTServiceWithInterpreter {
 		tp.setName("BHT Mensa");
 
 
-		tp = serviceProxy.updateTouchpoint(tp.getId(), tp);
+		tp = serviceProxy.updateTouchpoint(tp.getId(), (StationaryTouchpoint) tp);
 		show("updated: " + tp);
 
     }

@@ -7,14 +7,17 @@ import org.dieschnittstelle.ess.entities.erp.PointOfSale;
 import org.dieschnittstelle.ess.entities.erp.StockItem;
 
 import javax.ejb.EJB;
+import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Singleton
-public class StockSystemSingleton implements StockSystemLocal {
+@WebService(targetNamespace = "http://dieschnittstelle.org/ess/ue", serviceName = "StockSystemWebService", endpointInterface = "org.dieschnittstelle.ess.ejb.ejbmodule.erp.StockSystemRemote")
+public class StockSystemSingleton implements StockSystemLocal, StockSystemRemote {
 
     @EJB
     private StockItemCRUDLocal siCRUD;

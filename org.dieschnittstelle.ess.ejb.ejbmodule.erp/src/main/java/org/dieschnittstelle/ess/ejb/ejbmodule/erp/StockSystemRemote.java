@@ -4,13 +4,21 @@ import java.util.List;
 
 import org.dieschnittstelle.ess.entities.erp.IndividualisedProductItem;
 
+import javax.ejb.Remote;
+import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 
 /**
  * OBSOLETE IF REST ACCESS IS USED TO SERVER-SIDE COMPONENTS:
  * this interface shall be implemented using the two CRUD EJBs for PointOfSale and StockItem via
  * local interface below, comments will give some hints at how the implementation could be done
  */
-
+@Remote
+@WebService
 public interface StockSystemRemote {
 
 	/**

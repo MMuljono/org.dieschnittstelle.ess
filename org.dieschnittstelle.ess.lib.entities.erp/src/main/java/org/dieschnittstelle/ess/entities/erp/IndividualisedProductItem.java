@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace="http://dieschnittstelle.org/ess/entities/erp/ws")
+@XmlSeeAlso({IndividualisedProductItem.class,ProductType.class})
 
 @Entity
 public class IndividualisedProductItem extends AbstractProduct implements Serializable {
